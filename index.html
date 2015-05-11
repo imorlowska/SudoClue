@@ -251,7 +251,30 @@
 			  </tr>
 			</tbody>
 		</table>
+		<br><br>
+		<div id="typename">
+			Type: normal
 		</div>
-		<div >
+		<div id="table_buttons">
+		<br><br>
+			<button type="button" class="btn btn-primary center" id="change_type">
+											<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+											Change type
+			</button>
+			<button type="button" class="btn btn-success center" id="solve">
+											<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+											Solve
+			</button>
+			<button type="button" class="btn btn-warning center" id="clear">
+											<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+											Clear
+			</button>
+			<a class="btn btn-info" onclick="exportJson(this);" id='export_button'>
+                                       <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                                       Export JSON
+            </a>
+	
+		</div>
+		</div>
     </body>
 </html>
