@@ -310,11 +310,9 @@ var get_data_and_solve = function() {
 	var solved = false;
 	//console.log(grid);
 	var val = document.getElementById('typename').innerHTML;
-	if (val.indexOf("normal") > -1) {solved = solve(grid, "normal");}
-	else if (val.indexOf("x even") > -1) {solved = solve(grid, "x_even");}
-	else if (val.indexOf("x odd") > -1) {solved = solve(grid, "x_odd");}
-	else if (val.indexOf("y odd") > -1) {solved = solve(grid, "y_odd");}
-	else if (val.indexOf("x even") > -1) {solved = solve(grid, "x_odd");}
+	if (val.indexOf("normal") > -1) {solved = solve(grid, "normal"); colsole.log("normal");}
+	else if (val.indexOf("x odd") > -1) {solved = solve(grid, "x_odd"); console.log("x odd");}
+	else if (val.indexOf("y odd") > -1) {solved = solve(grid, "y_odd"); console.log("y odd");}
 	else alert("unknown type!");
 
 	if (!solved) {
@@ -354,9 +352,7 @@ function exportJson(el) {
 
 var change_type = function() {
 	var val = document.getElementById('typename').innerHTML;
-	if (val.indexOf("normal") > -1) {document.getElementById('typename').innerHTML = "Type: x even"}
-	else if (val.indexOf("x even") > -1) {document.getElementById('typename').innerHTML = "Type: x odd"}
-	else if (val.indexOf("x odd") > -1) {document.getElementById('typename').innerHTML = "Type: y even"}
-	else if (val.indexOf("y even") > -1) {document.getElementById('typename').innerHTML = "Type: y odd"}
+	if (val.indexOf("normal") > -1) {document.getElementById('typename').innerHTML = "Type: x odd"}
+	else if (val.indexOf("x odd") > -1) {document.getElementById('typename').innerHTML = "Type: y odd"}
 	else {document.getElementById('typename').innerHTML = "Type: normal"}
 } 
