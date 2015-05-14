@@ -78,6 +78,42 @@ zeroes =    [0,0,0,0,0,0,0,0,0,
 			 0,0,0,0,0,0,0,0,0,
 			 0,0,0,0,0,0,0,0,0];
 			 
+bad_column =[0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 
+			 0,0,0,0,0,0,0,0,0,
+			 0,9,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 
+			 0,0,0,0,0,0,0,0,0,
+			 0,9,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0];
+
+bad_row =   [0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 
+			 0,9,0,0,0,0,9,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0];
+			 
+bad_square =[0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 
+			 9,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,9,0,0,0,0,0,
+			 
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0,
+			 0,0,0,0,0,0,0,0,0];
+			 
 very_easy = [6,0,0, 8,0,5, 9,1,0,
 			 9,4,1, 6,0,0, 5,0,0,
 			 0,0,5, 1,4,0, 3,0,7,
@@ -395,23 +431,44 @@ var check_possible = function(grid) {
 	for (var i = 0; i <=8 ; i++) {
 		var poss = true;
 		var indexes = column(i);
-		poss = poss && check_unique(indexes);
+		poss = poss && check_unique(indexes, grid);
+		indexes = [];
 		indexes = row(i*9);
-		poss = poss && check_unique(indexes);
+		poss = poss && check_unique(indexes, grid);
 		indexes = getSquare(getCorner(i),0);
-		poss = poss && check_unique(indexes);
+		poss = poss && check_unique(indexes, grid);
+		if (!poss) {
+			return false;
+		}
 	}
+	return check_banned(grid);
 }
 
-var check_unique = function(tab) {
-	tab.sort(sortNumber);
-	for (var i = 1; i < tab.length; i++) {
-		if (tab[i] == tab[i-1]) {
+var check_unique = function(tab, grid) {
+	var tmp = [];
+	for (var i = 0; i < tab.length; i++) {
+		if (grid[tab[i]] != 0) {
+			tmp.push(grid[tab[i]]);
+		}
+	}
+	tmp.sort(sortNumber);
+	for (var i = 1; i < tmp.length; i++) {
+		if (tmp[i] == tmp[i-1]) {
 			return false;
 		}
 	}
 	return true;
 }
+
+var check_banned = function(grid) {
+	for (var i = 0; i <=80; i++) {
+		if ((grid[i] != 0) && ($.inArray(grid[i], window.banned_rules[i]) != -1)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 weird_order = [ 0, 1, 2,  9,10,11, 18,19,20,
                 3, 4, 5, 12,13,14, 21,22,23, 
 				6, 7, 8, 15,16,17, 24,25,26,
@@ -470,7 +527,7 @@ var add_to_banned_list = function() {
 var init_banned_rules = function() {
 	window.banned_rules = [];
 	for (var i = 0; i <=80; i++) {
-		window.banned_rules.push([0]);
+		window.banned_rules.push([-1]);
 	}
 	var new_tbody = document.createElement('tbody');
 	$('#banned_list tr').remove();

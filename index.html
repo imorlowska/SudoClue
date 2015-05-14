@@ -318,10 +318,7 @@
 		<div class="navbar navbar-default navbar-right navbar-fixed-bottom" id="footer">
             <div class="container pull-right">
 				<div class ="navbar-text navbar-left" div id="table_buttons">
-					<a class="btn btn-info pull-right" onclick="exportJson(this);" id='export_button'>
-											   <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
-											   Export
-					</a>
+					
 					<button type="button" class="btn btn-danger pull-right" id="back">
 													<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 													Back
@@ -330,8 +327,12 @@
 													<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
 													Clear
 					</button>
-					<button type="button" class="btn btn-success pull-right" id="solve_steps">
-													<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+					<a class="btn btn-info pull-right" onclick="exportJson(this);" id='export_button'>
+											   <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+											   Export
+					</a>
+					<button type="button" class="btn btn-primary pull-right" id="solve_steps">
+													<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
 													Step by step
 					</button>
 					<button type="button" class="btn btn-success pull-right" id="solve">
