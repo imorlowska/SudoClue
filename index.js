@@ -114,10 +114,7 @@ incorrect = [0,0,0, 0,0,0, 0,0,0,
 			 0,0,0, 0,0,0, 0,0,1,
 			 2,3,4, 5,6,7, 8,9,0]
 
-x_relevant = [0, 10, 20, 30, 40, 50, 60, 70, 80, 8, 16, 24, 32, 48, 56, 64, 72];
-y_relevant = [0, 10, 20, 30, 40, 8, 16, 24, 32, 49, 58, 67, 76];
-even_values = [2,4,6,8];
-odd_values  = [1,3,5,7,9];
+
 var getColumn = function(n,i) {
 	if (i == 9) {
 		return []
@@ -195,15 +192,6 @@ var impossible = function(grid, i, type) {
 	relevant(i).forEach(function(el, index, array){
 		result.push(grid[el])
 		});
-	if (type == "x_even" && !($.inArray(i, x_relevant) === -1)) {
-		result = result.concat(odd_values);
-	} else if (type == "x_odd" && !($.inArray(i, x_relevant) === -1)) {
-		result = result.concat(even_values);
-	} else if (type == "y_even" && !($.inArray(i, y_relevant) === -1)) {
-		result = result.concat(odd_values);
-	} else if (type == "y_odd" && !($.inArray(i, y_relevant) === -1)) {
-		result = result.concat(even_values);
-	}
 	result = unique(result.sort(sortNumber));
 	if (!($.inArray(0, result) === -1)) {
 		result.shift();
@@ -300,17 +288,12 @@ var solve = function(grid, type) {
 }
 
 var get_data_and_solve = function() {
-	var grid = [];
-	for (var i = 0; i <=80; i++) {
-		var val = document.getElementById('f_' + i).value;
-		if (val === "") { val = "0";}
-		//console.log(i + ": ", val);
-		grid.push(parseInt(val));
-	}
+	var grid = get_data();
+	
 	var solved = false;
 	//console.log(grid);
 	var val = document.getElementById('typename').innerHTML;
-	if (val.indexOf("normal") > -1) {solved = solve(grid, "normal"); colsole.log("normal");}
+	if (val.indexOf("normal") > -1) {solved = solve(grid, "normal"); console.log("normal");}
 	else if (val.indexOf("x odd") > -1) {solved = solve(grid, "x_odd"); console.log("x odd");}
 	else if (val.indexOf("y odd") > -1) {solved = solve(grid, "y_odd"); console.log("y odd");}
 	else alert("unknown type!");
@@ -319,40 +302,44 @@ var get_data_and_solve = function() {
 		alert("Couldn't solve the puzzle!");
 	} else {
 		console.log(grid);
-		for (var i = 0; i <=80; i++) {
-			document.getElementById('f_' + i).value = grid[i];
-		}
+		fill_table(grid);
 	}
 }
+
+weird_order = [ 0, 1, 2,  9,10,11, 18,19,20,
+                3, 4, 5, 12,13,14, 21,22,23, 
+				6, 7, 8, 15,16,17, 24,25,26,
+				
+				27,28,29, 36,37,38, 45,46,47,				
+				30,31,32, 39,40,41, 48,49,50,
+				33,34,35, 42,43,44, 51,52,53,
+				
+				54,55,56, 63,64,65, 72,73,74,
+				57,58,59, 66,67,68, 75,76,77,
+				60,61,62, 69,70,71, 78,79,80];
+				
+
+var get_data = function() {
+	grid = [];
+	for (var i = 0; i <= 80; i++) {
+		var val = document.getElementById('f_' + weird_order[i]).value;
+		if (val === "") { val = "0";}
+		grid.push(parseInt(val));
+	}
+	return grid;
+}
+
+var fill_table = function(grid) {
+	for (var i = 0; i <=80; i++) {
+		document.getElementById('f_' + weird_order[i]).value = grid[i];
+	}
+}
+
 
 var clear_table = function() {
 	for (var i = 0; i <=80; i++) {
-		document.getElementById('f_' + i).value = "";
+		document.getElementById('f_' + weird_order[i]).value = "";
 	}
 }
 
-function exportJson(el) {
-	var grid = [];
-	for (var i = 0; i <=80; i++) {
-		var val = document.getElementById('f_' + i).value;
-		if (val === "") { val = "0";}
-		//console.log(i + ": ", val);
-		grid.push(parseInt(val));
-	}
-	var data = [
-            {
-                puzzle: grid
-            }
-        ];
-	var json = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-	console.log(json);
-	el.setAttribute("href", json);
-	el.setAttribute("download", "sudoclue_puzzle.json");
-}
 
-var change_type = function() {
-	var val = document.getElementById('typename').innerHTML;
-	if (val.indexOf("normal") > -1) {document.getElementById('typename').innerHTML = "Type: x odd"}
-	else if (val.indexOf("x odd") > -1) {document.getElementById('typename').innerHTML = "Type: y odd"}
-	else {document.getElementById('typename').innerHTML = "Type: normal"}
-} 
