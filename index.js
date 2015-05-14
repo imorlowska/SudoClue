@@ -1,6 +1,7 @@
 $(document).ready(function() {
     $('#tablediv').hide();
 	$('#table_buttons').hide();
+	init_banned_rules();
 	init_intro();
 });
 
@@ -21,15 +22,25 @@ var init_intro = function() {
 		get_data_and_solve();
 	});
 	
+	$('#solve_steps').click(function(event) {
+		event.preventDefault();
+		get_data_and_solve_steps();
+	});
+	
 	$('#clear').click(function(event) {
 		event.preventDefault();
 		clear_table();
 	});
 	
 	$('#back').click(function(event) {
-        event.preventDefault();
+       event.preventDefault();
        window.location.reload();
        console.log('hi');	   
+    });
+	
+	$('#add_banned').click(function(event) {
+        event.preventDefault();
+        add_to_banned_list();
     });
 };
 
@@ -193,7 +204,10 @@ var impossible = function(grid, i) {
 	};
 	var result = [];
 	relevant(i).forEach(function(el, index, array){
-		result.push(grid[el])
+		result.push(grid[el]);
+		});
+	window.banned_rules[i].forEach(function(el, index, array) {
+		result.push(el);
 		});
 	result = unique(result.sort(sortNumber));
 	if (!($.inArray(0, result) === -1)) {
@@ -266,9 +280,7 @@ var guess_one_and_solve = function(grid) {
 	if (is_done(grid)) {
 		return true;
 	}
-	
 	var i = get_min_i(grid);
-	
 	var wyn = possible(grid, i);
 	for (var j = 0; j < wyn.length; j++) {
 		grid[i] = wyn[j];
@@ -282,9 +294,40 @@ var guess_one_and_solve = function(grid) {
 	return false;
 }
 
+var guess_one_and_solve2 = function(grid) {
+	if (is_done(grid)) {
+		return true;
+	}
+	var i = get_min_i(grid);
+	var wyn = possible(grid, i);
+	for (var j = 0; j < wyn.length; j++) {
+		grid[i] = wyn[j];
+		fill_table(grid);
+		alert("Writing " + wyn[j] + " in column " + (i%9) + " and row " + (Math.floor(i/9)));
+		maybe = solve_steps(grid);
+		if (maybe) {
+			return true;
+		}
+		alert("Guessed wrong! Going back...");
+		grid[i] = 0;
+		fill_table(grid);
+	}
+	grid[i] = 0;
+	fill_table(grid);
+	return false;
+}
+
 var solve = function(grid) {
 	if (isSolvable(grid)) {
 		return guess_one_and_solve(grid);
+	} else {
+		return false;
+	}
+}
+
+var solve_steps = function(grid) {
+	if (isSolvable(grid)) {
+		return guess_one_and_solve2(grid);
 	} else {
 		return false;
 	}
@@ -295,6 +338,20 @@ var get_data_and_solve = function() {
 	
 	var solved = false;
 	solved = solve(grid)
+
+	if (!solved) {
+		alert("Couldn't solve the puzzle!");
+	} else {
+		console.log(grid);
+		fill_table(grid);
+	}
+}
+
+var get_data_and_solve_steps = function() {
+	var grid = get_data();
+	
+	var solved = false;
+	solved = solve_steps(grid)
 
 	if (!solved) {
 		alert("Couldn't solve the puzzle!");
@@ -329,7 +386,11 @@ var get_data = function() {
 
 var fill_table = function(grid) {
 	for (var i = 0; i <=80; i++) {
-		document.getElementById('f_' + weird_order[i]).value = grid[i];
+		if(grid[i] == 0) {
+			document.getElementById('f_' + weird_order[i]).value = "";
+		} else {
+			document.getElementById('f_' + weird_order[i]).value = grid[i];
+		}
 	}
 }
 
@@ -338,6 +399,38 @@ var clear_table = function() {
 	for (var i = 0; i <=80; i++) {
 		document.getElementById('f_' + weird_order[i]).value = "";
 	}
+	if (!(window.banned_list === 'undefined')) {
+		init_banned_rules();
+	}
 }
 
+var add_to_banned_list = function() {
+    var row_n = parseInt(document.getElementById('row_number').value);
+    var column_n = parseInt(document.getElementById('column_number').value);
+    var banned_n = parseInt(document.getElementById('banned_number').value);
+
+    var list_item = '<tr><td>' + row_n + '</td><td>' + column_n + '</td><td>' + banned_n + '</td></tr>';
+    var list = $('#banned_list');
+    list.append(list_item);
+    var index = row_n * 9 + column_n;
+	window.banned_rules[index].push(banned_n);
+}
+
+var init_banned_rules = function() {
+	window.banned_rules = [];
+	for (var i = 0; i <=80; i++) {
+		window.banned_rules.push([0]);
+	}
+	var new_tbody = document.createElement('tbody');
+	$('#banned_list tr').remove();
+	$('#banned_list').append('<tr><td>Row</td><td>Column</td><td>Number</td></tr>');
+}
+
+function exportJson(el) {
+	var grid = get_data();
+    var json = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(grid));
+    el.setAttribute("href", "data:" + json);
+    el.setAttribute("download", "puzzle.json");
+
+}
 
