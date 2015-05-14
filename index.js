@@ -1,6 +1,7 @@
 $(document).ready(function() {
     $('#tablediv').hide();
 	$('#table_buttons').hide();
+	$('#load_json_div').hide();
 	init_banned_rules();
 	init_intro();
 });
@@ -12,9 +13,6 @@ var init_intro = function() {
 		$('#intro_container').hide();
         $('#tablediv').show();
 		$('#table_buttons').show();
-		//var input_json = document.getElementById("pasted_json").value;
-        //var parsed = JSON.parse(input_json);
-        //init_loaded(parsed);
 	});
 	
 	$('#solve').click(function(event) {
@@ -41,6 +39,30 @@ var init_intro = function() {
 	$('#add_banned').click(function(event) {
         event.preventDefault();
         add_to_banned_list();
+    });
+	
+	$('#load_sudoku_button').click(function(event) {
+		event.preventDefault();
+		$('#intro_container').hide();
+		$('#table_buttons').show();
+		$('#export_button').hide();
+		$('#clear').hide();
+		$('#solve_steps').hide();
+		$('#solve').hide();
+		$('#load_json_div').show();
+	});
+	
+	$('#load_button_next').click(function(event) {
+        event.preventDefault();
+        var input_json = document.getElementById("pasted_puzzle_json").value;
+        var grid = JSON.parse(input_json);
+		$('#export_button').show();
+		$('#clear').show();
+		$('#solve_steps').show();
+		$('#solve').show();
+		$('#load_json_div').hide();
+		$('#tablediv').show();
+		fill_table(grid);
     });
 };
 
@@ -336,31 +358,60 @@ var solve_steps = function(grid) {
 var get_data_and_solve = function() {
 	var grid = get_data();
 	
-	var solved = false;
-	solved = solve(grid)
+	if (check_possible(grid)) {	
+		var solved = false;
+		solved = solve(grid)
 
-	if (!solved) {
-		alert("Couldn't solve the puzzle!");
+		if (!solved) {
+			alert("Couldn't solve the puzzle!");
+		} else {
+			console.log(grid);
+			fill_table(grid);
+		}
 	} else {
-		console.log(grid);
-		fill_table(grid);
+		alert("Puzzle is incorrect!");
 	}
 }
 
 var get_data_and_solve_steps = function() {
 	var grid = get_data();
 	
-	var solved = false;
-	solved = solve_steps(grid)
+	if (check_possible(grid)) {	
+		var solved = false;
+		solved = solve_steps(grid)
 
-	if (!solved) {
-		alert("Couldn't solve the puzzle!");
+		if (!solved) {
+			alert("Couldn't solve the puzzle!");
+		} else {
+			console.log(grid);
+			fill_table(grid);
+		}
 	} else {
-		console.log(grid);
-		fill_table(grid);
+		alert("Puzzle is incorrect!");
 	}
 }
 
+var check_possible = function(grid) {
+	for (var i = 0; i <=8 ; i++) {
+		var poss = true;
+		var indexes = column(i);
+		poss = poss && check_unique(indexes);
+		indexes = row(i*9);
+		poss = poss && check_unique(indexes);
+		indexes = getSquare(getCorner(i),0);
+		poss = poss && check_unique(indexes);
+	}
+}
+
+var check_unique = function(tab) {
+	tab.sort(sortNumber);
+	for (var i = 1; i < tab.length; i++) {
+		if (tab[i] == tab[i-1]) {
+			return false;
+		}
+	}
+	return true;
+}
 weird_order = [ 0, 1, 2,  9,10,11, 18,19,20,
                 3, 4, 5, 12,13,14, 21,22,23, 
 				6, 7, 8, 15,16,17, 24,25,26,

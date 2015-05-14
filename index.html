@@ -37,7 +37,7 @@
 									<div class="text-center">
 										<div class="btn-group-vertical" role="group">
 											<button class='btn btn-default' id='input_sudoku_button'>Input new puzzle</button>
-											<button class='btn btn-default' id='load_sample_button'>Load sample puzzle</button>
+											<!--button class='btn btn-default' id='load_sample_button'>Load sample puzzle</button-->
 											<button class='btn btn-default' id='load_sudoku_button'>Load puzzle from file</button>
 										</div>
 									</div>
@@ -284,6 +284,34 @@
 				</thead>
 				<tbody id='banned_tbody'>
 				</tbody>
+			</div>
+		</div>
+		<div class="container" id='load_json_div'>
+            <div id="main_container">
+				<div id="intro_container" class="row">
+					<div id="intro_main">
+						<div class=col-sm-10>
+							<div class="panel panel-info" id="main_menu">
+								<div class="panel-heading text-center">
+									<h4>Load puzzle from JSON</h4>
+								</div>
+								<div class="panel-body">
+									<p> Please paste JSON string that you obtained in a previous game. </p>
+									<p> Please make sure it is copied and pasted properly. </p>
+									<form role="form" class="form form-default">
+										<div class="form-group">
+											<textarea rows="4" cols="50" id="pasted_puzzle_json"></textarea>
+										</div>
+										<button id="load_button_next" class="btn btn-success">
+											<span class="glyphicon glyphicon-upload" aria-hidden="true"></span>
+											Load
+										</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<br><br><br><br>
