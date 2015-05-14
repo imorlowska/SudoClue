@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $('#tablediv').hide();
+	$('#table_buttons').hide();
 	init_intro();
 });
 
@@ -9,6 +10,7 @@ var init_intro = function() {
         event.preventDefault();
 		$('#intro_container').hide();
         $('#tablediv').show();
+		$('#table_buttons').show();
 		//var input_json = document.getElementById("pasted_json").value;
         //var parsed = JSON.parse(input_json);
         //init_loaded(parsed);
@@ -24,10 +26,11 @@ var init_intro = function() {
 		clear_table();
 	});
 	
-	$('#change_type').click(function(event) {
-		event.preventDefault();
-		change_type();
-	});
+	$('#back').click(function(event) {
+        event.preventDefault();
+       window.location.reload();
+       console.log('hi');	   
+    });
 };
 
 zeroes =    [0,0,0,0,0,0,0,0,0,
@@ -184,7 +187,7 @@ var relevant = function(i) {
 };
 
 //impossible values for i
-var impossible = function(grid, i, type) {
+var impossible = function(grid, i) {
 	if (!(grid[i] == 0)) {
 		return [1,2,3,4,5,6,7,8,9]
 	};
@@ -200,8 +203,8 @@ var impossible = function(grid, i, type) {
 };
 
 //possible values for grid[i]
-var possible = function(grid, i, type) {
-	var imp = impossible(grid,i,type);
+var possible = function(grid, i) {
+	var imp = impossible(grid,i);
 	var pos = [];
 	for (var i = 1; i <= 9; i++) {
 		if ($.inArray(i,imp) === -1) {
@@ -211,20 +214,20 @@ var possible = function(grid, i, type) {
 	return pos;
 };
 
-var isSolvable = function(grid, type) {
+var isSolvable = function(grid) {
 	for (var i = 0; i <= 80; i++) {
-		if (grid[i] === 0 && possible(grid, i, type).length === 0) {
+		if (grid[i] === 0 && possible(grid, i).length === 0) {
 			return false
 		}
 	}
 	return true;
 };
 
-var solveAtLeastOneEasy = function(grid, type) {
+var solveAtLeastOneEasy = function(grid) {
 	var didAtLeastOne = false;
 	for (var i = 0; i <= 80; i++) {
 		if (grid[i] === 0) {
-			var pos = possible(grid, i, type);
+			var pos = possible(grid, i);
 			if (pos.length === 1) {
 				didAtLeastOne = true;
 				grid[i] = pos[0];
@@ -243,34 +246,34 @@ var is_done = function(grid) {
 	return true;
 }
 
-var get_min_i = function (grid, type) {
+var get_min_i = function (grid) {
 	var min = 9;
 	for (var i = 0; i <= 80; i++) {
-		var tmp = possible(grid, i, type).length;
+		var tmp = possible(grid, i).length;
 		if (tmp > 0 && tmp < min) {
 			min = tmp;
 		}
 	}
 	
 	for (var i = 0; i <= 80; i++) {
-		if (possible(grid,i,type).length === min) {
+		if (possible(grid,i).length === min) {
 			return i;
 		}
 	}
 }
 
-var guess_one_and_solve = function(grid, type) {
+var guess_one_and_solve = function(grid) {
 	if (is_done(grid)) {
 		return true;
 	}
 	
-	var i = get_min_i(grid,type);
+	var i = get_min_i(grid);
 	
-	var wyn = possible(grid, i, type);
+	var wyn = possible(grid, i);
 	for (var j = 0; j < wyn.length; j++) {
 		grid[i] = wyn[j];
 		//console.log(i, wyn[j], wyn, grid);
-		maybe = solve(grid, type);
+		maybe = solve(grid);
 		if (maybe) {
 			return true;
 		}
@@ -279,9 +282,9 @@ var guess_one_and_solve = function(grid, type) {
 	return false;
 }
 
-var solve = function(grid, type) {
-	if (isSolvable(grid,type)) {
-		return guess_one_and_solve(grid, type);
+var solve = function(grid) {
+	if (isSolvable(grid)) {
+		return guess_one_and_solve(grid);
 	} else {
 		return false;
 	}
@@ -291,12 +294,7 @@ var get_data_and_solve = function() {
 	var grid = get_data();
 	
 	var solved = false;
-	//console.log(grid);
-	var val = document.getElementById('typename').innerHTML;
-	if (val.indexOf("normal") > -1) {solved = solve(grid, "normal"); console.log("normal");}
-	else if (val.indexOf("x odd") > -1) {solved = solve(grid, "x_odd"); console.log("x odd");}
-	else if (val.indexOf("y odd") > -1) {solved = solve(grid, "y_odd"); console.log("y odd");}
-	else alert("unknown type!");
+	solved = solve(grid)
 
 	if (!solved) {
 		alert("Couldn't solve the puzzle!");
